@@ -1,25 +1,69 @@
 {
-    "version": "2026.1119.122830",
+    "version": "2026.1123.23506",
     "description": "An enhanced Sunshine fork for Moonlight with HDR10/HDR Vivid, virtual displays, and optimized encoders.",
     "homepage": "https://github.com/AlkaidLab/foundation-sunshine",
     "license": "GPL-3.0-only",
+    "notes": [
+        "Installed from an elevated shell (e.g. 'scoop install -g'), the bundled drivers and the SunshineService are set up automatically,",
+        "and the install directory is locked down to Administrators/SYSTEM (Users get read+execute), which service mode requires.",
+        "Update an elevated install with an elevated shell: 'scoop update -g foundation-sunshine'.",
+        "Otherwise run these once from an admin shell:",
+        "  $dir\\scripts\\install-vdd.bat --preserve-healthy-existing   virtual display driver (ZakoVDD)",
+        "  $dir\\scripts\\install-gamepad.bat                            virtual gamepad driver (ViGEmBus)",
+        "  $dir\\scripts\\install-vsink.bat                              virtual audio sink (optional)",
+        "  $dir\\scripts\\install-service.bat                            registers the SunshineService",
+        "  $dir\\scripts\\add-firewall-rule.bat",
+        "Or run $dir\\install_portable.bat for the interactive all-in-one wizard.",
+        "Sunshine can be configured at https://localhost:47990/ by default."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v2026.1119.122830.%E6%9D%82%E9%B1%BC/Sunshine.v2026.1119.WindowsInstaller.exe",
-            "hash": "b7a5ca782b2154660501326bcc0721809182c7738908ab95863de1ff58ef755e"
+            "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v2026.1123.23506.%E6%9D%82%E9%B1%BC/Sunshine.v2026.1123.Portable-x64.zip",
+            "hash": "92db296252550c2fb17c5c26669f4697b628a8da790089d39393176ddb983418"
         }
     },
-    "installer": {
-        "script": [
-            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', \"/DIR=$dir\" -Wait"
-        ]
-    },
+    "extract_dir": "Sunshine",
+    "pre_install": [
+        "# sunshine.exe expects to be started from its own directory.",
+        "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
+        "# Service mode runs as SYSTEM, so a user-writable install directory is a privilege-escalation hole and gets rejected.",
+        "# Lock it down to Administrators/SYSTEM for writing, Users keep read+execute (the same ACL Program Files has).",
+        "if (is_admin) {",
+        "    & icacls \"$dir\" /inheritance:r /grant:r '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-545:(OI)(CI)RX' | Out-Null",
+        "    if ($LASTEXITCODE -eq 0) { Write-Host 'Install directory ACL tightened (Administrators/SYSTEM write, Users read+execute).' -ForegroundColor Cyan }",
+        "    else { Write-Host 'Warning: could not tighten the install directory ACL.' -ForegroundColor Yellow }",
+        "}"
+    ],
+    "post_install": [
+        "# Drivers and services are system-wide, so only do this when we are already elevated.",
+        "if (is_admin) {",
+        "    Write-Host 'Elevated install detected, setting up bundled drivers and service...' -ForegroundColor Cyan",
+        "    & \"$dir\\scripts\\install-vdd.bat\" --preserve-healthy-existing",
+        "    & \"$dir\\scripts\\install-gamepad.bat\"",
+        "    & \"$dir\\scripts\\install-service.bat\"",
+        "    & \"$dir\\scripts\\add-firewall-rule.bat\"",
+        "} else {",
+        "    Write-Host 'Skipped driver/service setup: re-run from an elevated shell (or use ''scoop install -g'') to have it done automatically.' -ForegroundColor Yellow",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# Do not leave a service registered against a folder that is about to disappear.",
+        "if ((is_admin) -and $dir -and (Test-Path \"$dir\\scripts\\uninstall-service.bat\")) {",
+        "    & \"$dir\\scripts\\uninstall-service.bat\"",
+        "}"
+    ],
+    "bin": [
+        "sunshine.bat",
+        "tools\\dxgi-info.exe",
+        "tools\\audio-info.exe"
+    ],
     "shortcuts": [
         [
             "sunshine.exe",
             "Foundation Sunshine"
         ]
     ],
+    "persist": "config",
     "checkver": {
         "github": "https://github.com/AlkaidLab/foundation-sunshine",
         "regex": "v([\\d.]+)\\.杂鱼"
@@ -27,7 +71,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v$version.%E6%9D%82%E9%B1%BC/Sunshine.v$matchHead.WindowsInstaller.exe"
+                "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v$version.%E6%9D%82%E9%B1%BC/Sunshine.v$majorVersion.$minorVersion.Portable-x64.zip"
             }
         }
     }

@@ -5,15 +5,25 @@
     "license": "AGPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v0.10.0/any-listen-0.10.0-x64-Setup.exe",
-            "hash": "bd752623fe7914d202ace29b74a71b8e1d55e7e9d4760ef0732e80baa46d6196"
+            "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v0.10.0/any-listen-0.10.0-win_x64-green.7z",
+            "hash": "aa79c030d724bc446668b6677c204745effc3b249c6700e1f525e13ce3e464a2"
+        },
+        "arm64": {
+            "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v0.10.0/any-listen-0.10.0-win_arm64-green.7z",
+            "hash": "61a749a66b33afba4ac0f30dacdbd9a610421c683c0692b7a8279a7d114114d4"
         }
     },
-    "installer": {
-        "script": [
-            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList '/S' -Wait"
-        ]
-    },
+    "pre_install": [
+        "# The green archive may contain a single top-level folder; lift its contents into $dir.",
+        "if (!(Test-Path \"$dir\\any-listen.exe\")) {",
+        "    $inner = Get-ChildItem $dir -Directory -Force | Where-Object { Test-Path (Join-Path $_.FullName 'any-listen.exe') } | Select-Object -First 1",
+        "    if ($inner) {",
+        "        Get-ChildItem $inner.FullName -Force | Move-Item -Destination $dir -Force",
+        "        Remove-Item $inner.FullName -Recurse -Force",
+        "    }",
+        "}"
+    ],
+    "bin": "any-listen.exe",
     "shortcuts": [
         [
             "any-listen.exe",
@@ -26,7 +36,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v$version/any-listen-$version-x64-Setup.exe"
+                "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v$version/any-listen-$version-win_x64-green.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v$version/any-listen-$version-win_arm64-green.7z"
             }
         }
     }
