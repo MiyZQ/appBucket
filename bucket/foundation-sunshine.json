@@ -1,0 +1,34 @@
+{
+    "version": "2026.1119.122830",
+    "description": "An enhanced Sunshine fork for Moonlight with HDR10/HDR Vivid, virtual displays, and optimized encoders.",
+    "homepage": "https://github.com/AlkaidLab/foundation-sunshine",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v2026.1119.122830.%E6%9D%82%E9%B1%BC/Sunshine.v2026.1119.WindowsInstaller.exe",
+            "hash": "b7a5ca782b2154660501326bcc0721809182c7738908ab95863de1ff58ef755e"
+        }
+    },
+    "installer": {
+        "script": [
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', \"/DIR=$dir\" -Wait"
+        ]
+    },
+    "shortcuts": [
+        [
+            "sunshine.exe",
+            "Foundation Sunshine"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/AlkaidLab/foundation-sunshine",
+        "regex": "v([\\d.]+)\\.杂鱼"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v$version.%E6%9D%82%E9%B1%BC/Sunshine.v$matchHead.WindowsInstaller.exe"
+            }
+        }
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "version": "0.10.0",
+    "description": "A cross-platform private music playback service",
+    "homepage": "https://github.com/any-listen/any-listen",
+    "license": "AGPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v0.10.0/any-listen-0.10.0-x64-Setup.exe",
+            "hash": "bd752623fe7914d202ace29b74a71b8e1d55e7e9d4760ef0732e80baa46d6196"
+        }
+    },
+    "installer": {
+        "script": [
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList '/S' -Wait"
+        ]
+    },
+    "shortcuts": [
+        [
+            "any-listen.exe",
+            "any-listen"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/any-listen/any-listen-desktop"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/any-listen/any-listen-desktop/releases/download/v$version/any-listen-$version-x64-Setup.exe"
+            }
+        }
+    }
+}
