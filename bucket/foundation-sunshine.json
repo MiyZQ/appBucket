@@ -1,5 +1,5 @@
 {
-    "version": "2026.1123.23506",
+    "version": "2026.1031.121458",
     "description": "An enhanced Sunshine fork for Moonlight with HDR10/HDR Vivid, virtual displays, and optimized encoders.",
     "homepage": "https://github.com/AlkaidLab/foundation-sunshine",
     "license": "GPL-3.0-only",
@@ -18,8 +18,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v2026.1123.23506.%E6%9D%82%E9%B1%BC/Sunshine.v2026.1123.Portable-x64.zip",
-            "hash": "92db296252550c2fb17c5c26669f4697b628a8da790089d39393176ddb983418"
+            "url": "https://github.com/AlkaidLab/foundation-sunshine/releases/download/v2026.1031.121458.%E6%9D%82%E9%B1%BC/Sunshine.v2026.1031.Portable-x64.zip",
+            "hash": "2dc96b5abf76fb1d519b3cac4aee50c4450e05c813027955a34c0a0e25a3b6f1"
         }
     },
     "extract_dir": "Sunshine",
